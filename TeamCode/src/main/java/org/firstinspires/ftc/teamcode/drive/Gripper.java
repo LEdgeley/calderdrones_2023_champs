@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Gripper {
-    private Servo gripper;
+    private final Servo gripper;
     public static double GRIPPER_OPEN = 0.45;
     public static double GRIPPER_CLOSED = 0.3;
     public String state = "Grab";

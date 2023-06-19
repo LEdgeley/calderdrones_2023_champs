@@ -19,8 +19,8 @@ public class Lift {
     public Gripper gripper;
     public Positioner positioner;
     public ElapsedTime stateMachineTimer;
-    private ElapsedTime PIDTimer;
-    private LinearOpMode opMode;
+    private final ElapsedTime PIDTimer;
+    private final LinearOpMode opMode;
     public enum LiftState{
         CONE_POSITIONING,
         LOWERING_LIFT_TO_GRAB,
@@ -38,14 +38,13 @@ public class Lift {
     private double integral_sum = 0;
     private double lastError = 0;
 
-    public double lift_power = -0.1;
     public static double Kp = 0.01;
     public static double Ki = 0.0;
     public static double Kd = 0.0;
     public static double Kg = 0.27;
 
     public double out = 0.0;
-    public LinkedHashMap<String, Integer> presets = new LinkedHashMap<String, Integer>();
+    public LinkedHashMap<String, Integer> presets = new LinkedHashMap<>();
     public String liftTargetPreset = "Floor";
 
     public Lift(HardwareMap hardwareMap, LinearOpMode opMode){
@@ -79,8 +78,11 @@ public class Lift {
         lift_right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //This assumes the robot starts with the lift retracted (at minExtenstion)
-        lift_left.setTargetPosition(presets.get("Floor"));
-        lift_right.setTargetPosition(presets.get("Floor"));
+        
+        if (presets.containsKey("Floor")) {
+            lift_left.setTargetPosition(presets.get("Floor"));
+            lift_right.setTargetPosition(presets.get("Floor"));
+        }
 
         lift_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -88,12 +90,12 @@ public class Lift {
         lift_left.setDirection(DcMotor.Direction.REVERSE);
         lift_right.setDirection(DcMotor.Direction.REVERSE);
     }
-    public void lowerLift() throws InterruptedException {
+    public void lowerLift() {
         lift_left.setPower(-0.1);
         lift_right.setPower(-0.1);
     }
 
-    public void forceLowerLift() throws InterruptedException {
+    public void forceLowerLift() {
         lift_left.setPower(-0.5);
         lift_right.setPower(-0.5);
     }
@@ -111,44 +113,50 @@ public class Lift {
     public void choosePresetPosition(String preset) {
         liftTargetPreset = preset;
 
-        lift_set_point = presets.get(liftTargetPreset);
+        if (presets.containsKey(liftTargetPreset)) {
+            lift_set_point = presets.get(liftTargetPreset);
+        }
     }
 
     public void nextPolePosition() {
-        if(liftTargetPreset == "GroundStation") {
-            liftTargetPreset = "LowPole";
-        }
-        else if (liftTargetPreset == "LowPole"){
-            liftTargetPreset = "MedPole";
-        }
-        else if(liftTargetPreset == "MedPole") {
-            liftTargetPreset = "HighPole";
-        }
-        else {
-            nextPresetPosition();
+        switch (liftTargetPreset) {
+            case "GroundStation":
+                liftTargetPreset = "LowPole";
+                break;
+            case "LowPole":
+                liftTargetPreset = "MedPole";
+                break;
+            case "MedPole":
+                liftTargetPreset = "HighPole";
+                break;
+            default:
+                nextPresetPosition();
+                break;
         }
         lift_set_point = presets.get(liftTargetPreset);
     }
 
     public void previousPolePosition() {
-        if(liftTargetPreset == "LowPole") {
-            liftTargetPreset = "GroundStation";
-        }
-        else if (liftTargetPreset == "MedPole"){
-            liftTargetPreset = "LowPole";
-        }
-        else if(liftTargetPreset == "HighPole") {
-            liftTargetPreset = "MedPole";
-        }
-        else{
-            previousPresetPosition();
+        switch (liftTargetPreset) {
+            case "LowPole":
+                liftTargetPreset = "GroundStation";
+                break;
+            case "MedPole":
+                liftTargetPreset = "LowPole";
+                break;
+            case "HighPole":
+                liftTargetPreset = "MedPole";
+                break;
+            default:
+                previousPresetPosition();
+                break;
         }
         lift_set_point = presets.get(liftTargetPreset);
     }
     public void nextPresetPosition() {
         List<String> keys = new ArrayList<>(presets.keySet());
         for (int k = 0; k < keys.size(); k ++) {
-            if (keys.get(k) == liftTargetPreset && k < keys.size() -1) {
+            if (keys.get(k).equals(liftTargetPreset) && k < keys.size() -1) {
                 liftTargetPreset = keys.get(k + 1);
                 lift_set_point = presets.get(liftTargetPreset);
                 return;
@@ -159,14 +167,14 @@ public class Lift {
     public void previousPresetPosition() {
         List<String> keys = new ArrayList<>(presets.keySet());
         for (int k = 0; k < keys.size(); k ++) {
-            if (keys.get(k) == liftTargetPreset && k > 0) {
+            if (keys.get(k).equals(liftTargetPreset) && k > 0) {
                 liftTargetPreset = keys.get(k - 1);
                 lift_set_point = presets.get(liftTargetPreset);
                 return;
             }
         }
     }
-    public void teleOpInitialise() throws InterruptedException {
+    public void teleOpInitialise() {
 
         positioner.releaseCone();
         gripper.dropCone();
@@ -195,7 +203,7 @@ public class Lift {
 
     }
 
-    public void autonomousInitialise() throws InterruptedException {
+    public void autonomousInitialise() {
 
         opMode.telemetry.addData("Status", "Positioning Cone");
         opMode.telemetry.update();
@@ -243,29 +251,14 @@ public class Lift {
     }
     public boolean liftReady()
     {
-        if( Math.abs(lift_left.getCurrentPosition() - lift_set_point) < 35){
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return Math.abs(lift_left.getCurrentPosition() - lift_set_point) < 35;
 
     }
-    public void autoUpdate() throws InterruptedException {
+    public void autoUpdate() {
 
         switch (liftState) {
             case READY: {
                 opMode.telemetry.addData("Lift State", "Ready");
-                if (false) {
-                    liftState = LiftState.CONE_POSITIONING;
-                    positioner.positionCone();
-                    stateMachineTimer.reset();
-                } else if (false) {
-                    previousPresetPosition();
-                    liftState = LiftState.LOWERING_LIFT_TO_DROP;
-                    stateMachineTimer.reset();
-                }
                 break;
             }
             case CONE_POSITIONING: {
@@ -354,11 +347,11 @@ public class Lift {
         switch (liftState) {
             case READY: {
                 opMode.telemetry.addData("Lift State", "Ready");
-                if (currentGamepad2.a && !previousGamepad2.a && gripper.state == "Release") {
+                if (currentGamepad2.a && !previousGamepad2.a && gripper.state.equals("Release")) {
                     liftState = LiftState.CONE_POSITIONING;
                     positioner.positionCone();
                     stateMachineTimer.reset();
-                } else if (currentGamepad2.b && !previousGamepad2.b && gripper.state == "Grab") {
+                } else if (currentGamepad2.b && !previousGamepad2.b && gripper.state.equals("Grab")) {
                     previousPresetPosition();
                     liftState = LiftState.LOWERING_LIFT_TO_DROP;
                     stateMachineTimer.reset();

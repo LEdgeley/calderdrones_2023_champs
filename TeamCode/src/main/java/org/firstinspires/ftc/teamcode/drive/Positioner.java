@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Positioner {
-    private Servo left_positioner;
-    private Servo right_positioner;
+    private final Servo left_positioner;
+    private final Servo right_positioner;
     public static double positioning_arm_left_open = 0.35;
     public static double positioning_arm_left_closed = 0.265;
     public static double positioning_arm_right_open = 0.60;
@@ -17,11 +17,11 @@ public class Positioner {
         left_positioner = hardwareMap.get(Servo.class, "left_positioning_arm");
         right_positioner = hardwareMap.get(Servo.class, "right_positioning_arm");
     }
-    public void positionCone() throws InterruptedException {
+    public void positionCone() {
         left_positioner.setPosition(positioning_arm_left_closed);
         right_positioner.setPosition(positioning_arm_right_closed);
     }
-    public void releaseCone() throws InterruptedException {
+    public void releaseCone() {
         left_positioner.setPosition(positioning_arm_left_open);
         right_positioner.setPosition(positioning_arm_right_open);
     }
