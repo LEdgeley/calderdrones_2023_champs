@@ -72,9 +72,6 @@ public class CalderDronesAutonomousRight extends LinearOpMode {
     private double parkingHeading;
 
     private int parkingZone = 3;
-    String alliance = "Red";
-    String side = "Right";
-    String startingState = alliance + side;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -103,10 +100,7 @@ public class CalderDronesAutonomousRight extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.autonomousInitialise();
-        //lift.choosePresetPosition("GroundStation");
-        //while (!lift.liftReady()){
-        //    lift.update();
-        //}
+
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -146,142 +140,38 @@ public class CalderDronesAutonomousRight extends LinearOpMode {
             telemetry.update();
         }
 
+        startingPose = new Pose2d(36, -62, Math.toRadians(90));
+        waypoint1Pose = new Pose2d(24, -58, Math.toRadians(180));
+        waypoint1Heading = Math.toRadians(180);
+        waypoint2Pose = new Pose2d(14, -48, Math.toRadians(90));
+        waypoint2Heading = Math.toRadians(90);
+        waypoint3Pose = new Pose2d(14, -24, Math.toRadians(90));
+        waypoint3Heading = Math.toRadians(90);
+        highPolePose = new Pose2d(23, -4, Math.toRadians(90));
+        highPoleHeading = Math.toRadians(90);
 
-        switch (startingState) {
-            case "BlueLeft":
-                startingPose = new Pose2d(36, 62, Math.toRadians(270));
-                waypoint1Pose = new Pose2d(36, -14, Math.toRadians(90));
-                waypoint1Heading = Math.toRadians(90);
-                waypoint2Pose = new Pose2d(12, -48, Math.toRadians(90));
-                waypoint2Heading = Math.toRadians(90);
-                waypoint3Pose = new Pose2d(14, -24, Math.toRadians(90));
-                waypoint3Heading = Math.toRadians(90);
-                highPolePose = new Pose2d(29.5, 6, Math.toRadians(225));
-                highPoleHeading = Math.toRadians(245);
-
-                switch (parkingZone) {
-                    case 1:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(11.75, 11.75, Math.toRadians(270));
-                        parkingHeading = Math.toRadians(180);
-                        break;
-                    case 2:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(35.25, 23.5, Math.toRadians(270));
-                        parkingHeading = Math.toRadians(90);
-                        break;
-                    case 3:
-                    default:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(58.75, 11.75, Math.toRadians(180));
-                        parkingHeading = Math.toRadians(0);
-                        break;
-                }
+        switch (parkingZone) {
+            case 1:
+                parkingWaypointPose = new Pose2d(14, -18, Math.toRadians(45));;
+                parkingWaypointHeading = Math.toRadians(225);;
+                parkingLocation = new Pose2d(12, -24, Math.toRadians(90));
+                parkingHeading = Math.toRadians(270);
                 break;
-            case "BlueRight":
-                startingPose = new Pose2d(-36, 62, Math.toRadians(270));
-                waypoint1Pose = new Pose2d(36, -14, Math.toRadians(90));
-                waypoint1Heading = Math.toRadians(90);
-                waypoint2Pose = new Pose2d(12, -48, Math.toRadians(90));
-                waypoint2Heading = Math.toRadians(90);
-                waypoint3Pose = new Pose2d(14, -24, Math.toRadians(90));
-                waypoint3Heading = Math.toRadians(90);
-                highPolePose = new Pose2d(-29.5, 6, Math.toRadians(315));
-                highPoleHeading = Math.toRadians(295);
-
-                switch (parkingZone) {
-                    case 1:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(-11.75, 11.75, Math.toRadians(270));
-                        parkingHeading = Math.toRadians(0);
-                        break;
-                    case 2:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(-35.25, 23.5, Math.toRadians(270));
-                        parkingHeading = Math.toRadians(90);
-                        break;
-                    case 3:
-                    default:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(-58.75, 11.75, Math.toRadians(270));
-                        parkingHeading = Math.toRadians(180);
-                        break;
-                }
+            case 2:
+                parkingWaypointPose = new Pose2d(32, -18, Math.toRadians(135));;
+                parkingWaypointHeading = Math.toRadians(315);;
+                parkingLocation = new Pose2d(36, -24, Math.toRadians(90));
+                parkingHeading = Math.toRadians(270);
                 break;
-            case "RedLeft":
-                startingPose = new Pose2d(-36, -62, Math.toRadians(90));
-                waypoint1Pose = new Pose2d(36, -14, Math.toRadians(90));
-                waypoint1Heading = Math.toRadians(90);
-                waypoint2Pose = new Pose2d(12, -48, Math.toRadians(90));
-                waypoint2Heading = Math.toRadians(90);
-                waypoint3Pose = new Pose2d(14, -24, Math.toRadians(90));
-                waypoint3Heading = Math.toRadians(90);
-                highPolePose = new Pose2d(-29.5, -6, Math.toRadians(45));
-                highPoleHeading = Math.toRadians(55);
-
-                switch (parkingZone) {
-                    case 1:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(-58.75, -11.75, Math.toRadians(0));
-                        parkingHeading = Math.toRadians(180);
-                        break;
-                    case 2:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(-35.25, -23.5, Math.toRadians(90));
-                        parkingHeading = Math.toRadians(270);
-                        break;
-                    case 3:
-                    default:
-                        parkingWaypointPose = new Pose2d(-11.75, 11.75, Math.toRadians(270));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(-11.75, -11.75, Math.toRadians(90));
-                        parkingHeading = Math.toRadians(0);
-                        break;
-                }
-                break;
-            case "RedRight":
+            case 3:
             default:
-                startingPose = new Pose2d(36, -62, Math.toRadians(90));
-                waypoint1Pose = new Pose2d(24, -58, Math.toRadians(180));
-                waypoint1Heading = Math.toRadians(180);
-                waypoint2Pose = new Pose2d(14, -48, Math.toRadians(90));
-                waypoint2Heading = Math.toRadians(90);
-                waypoint3Pose = new Pose2d(14, -24, Math.toRadians(90));
-                waypoint3Heading = Math.toRadians(90);
-                highPolePose = new Pose2d(23, -4, Math.toRadians(90));
-                highPoleHeading = Math.toRadians(90);
-
-                switch (parkingZone) {
-                    case 1:
-                        parkingWaypointPose = new Pose2d(14, -18, Math.toRadians(45));;
-                        parkingWaypointHeading = Math.toRadians(225);;
-                        parkingLocation = new Pose2d(12, -24, Math.toRadians(90));
-                        parkingHeading = Math.toRadians(270);
-                        break;
-                    case 2:
-                        parkingWaypointPose = new Pose2d(32, -18, Math.toRadians(135));;
-                        parkingWaypointHeading = Math.toRadians(315);;
-                        parkingLocation = new Pose2d(36, -24, Math.toRadians(90));
-                        parkingHeading = Math.toRadians(270);
-                        break;
-                    case 3:
-                    default:
-                        parkingWaypointPose = new Pose2d(48, -14, Math.toRadians(180));;
-                        parkingWaypointHeading = Math.toRadians(0);;
-                        parkingLocation = new Pose2d(60, -24, Math.toRadians(90));
-                        parkingHeading = Math.toRadians(270);
-                        break;
-                }
+                parkingWaypointPose = new Pose2d(48, -14, Math.toRadians(180));;
+                parkingWaypointHeading = Math.toRadians(0);;
+                parkingLocation = new Pose2d(60, -24, Math.toRadians(90));
+                parkingHeading = Math.toRadians(270);
                 break;
         }
+
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startingPose)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     lift.choosePresetPosition("GroundStation");
