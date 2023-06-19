@@ -32,4 +32,17 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
+    implementation 'org.ftclib.ftclib:core:2.1.1'
+    implementation 'org.openftc:easyopencv:1.6.2'
+    implementation 'org.openftc:apriltag:1.1.1'
+    implementation files('lib/ftc265.aar')
+    implementation 'com.intel.realsense:librealsense:2.41.1-ftc265@aar'
+}
+
+repositories {
+    // This line will already be here; you do not need to add it
+    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+    // Add this line
+    maven { url = "https://maven.catboy.camp" }
+    mavenCentral()
 }
