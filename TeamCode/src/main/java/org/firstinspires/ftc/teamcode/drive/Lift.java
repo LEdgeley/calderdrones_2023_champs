@@ -24,6 +24,8 @@ public class Lift {
     public enum LiftState{
         CONE_POSITIONING,
         LOWERING_LIFT_TO_GRAB,
+
+        WAITING_FOR_LIFT_TO_STABILISE,
         GRABBING_CONE,
         POSITIONER_RELEASING,
         LIFT_RAISING,
@@ -272,6 +274,14 @@ public class Lift {
             case LOWERING_LIFT_TO_GRAB: {
                 opMode.telemetry.addData("Lift State", "Lowering Lift to Add");
                 if (liftReady()) {
+                    liftState = LiftState.WAITING_FOR_LIFT_TO_STABILISE;
+                    stateMachineTimer.reset();
+                }
+                break;
+            }
+            case WAITING_FOR_LIFT_TO_STABILISE: {
+                opMode.telemetry.addData("Lift State", "Waiting for Lift to Stabilise");
+                if (stateMachineTimer.milliseconds() > 250) {
                     liftState = LiftState.GRABBING_CONE;
                     gripper.grabCone();
                     stateMachineTimer.reset();
@@ -368,7 +378,15 @@ public class Lift {
             }
             case LOWERING_LIFT_TO_GRAB: {
                 opMode.telemetry.addData("Lift State", "Lowering Lift to Add");
-                if (liftReady()){
+                if (liftReady()) {
+                    liftState = LiftState.WAITING_FOR_LIFT_TO_STABILISE;
+                    stateMachineTimer.reset();
+                }
+                break;
+            }
+            case WAITING_FOR_LIFT_TO_STABILISE: {
+                opMode.telemetry.addData("Lift State", "Waiting for Lift to Stabilise");
+                if (stateMachineTimer.milliseconds() > 250) {
                     liftState = LiftState.GRABBING_CONE;
                     gripper.grabCone();
                     stateMachineTimer.reset();
